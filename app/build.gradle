@@ -41,3 +41,6 @@ dependencies {
 application {
     mainClass = 'gannaSquareAPI.AppKt'
 }
+
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
