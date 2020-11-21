@@ -85,28 +85,28 @@ open class UpCorssCell(
         override val level: Int,
         override val next: GannCell? = null,
         override val previous: GannCell? = null
-) : CrossCell(base, level, next, previous)
+) : UpCell(base, level, next, previous)
 
 open class RightCorssCell(
         override val base: Int,
         override val level: Int,
         override val next: GannCell? = null,
         override val previous: GannCell? = null
-) : CrossCell(base, level, next, previous)
+) : RightCell(base, level, next, previous)
 
 open class LeftCorssCell(
         override val base: Int,
         override val level: Int,
         override val next: GannCell? = null,
         override val previous: GannCell? = null
-) : CrossCell(base, level, next, previous)
+) : LeftCell(base, level, next, previous)
 
 open class DownCorssCell(
         override val base: Int,
         override val level: Int,
         override val next: GannCell? = null,
         override val previous: GannCell? = null
-) : CrossCell(base, level, next, previous)
+) : DownCell(base, level, next, previous)
 
 
 
