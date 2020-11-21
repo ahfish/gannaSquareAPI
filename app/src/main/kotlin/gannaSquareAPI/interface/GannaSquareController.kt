@@ -19,7 +19,7 @@ class GannaSquareController {
             method = arrayOf(RequestMethod.GET),
             produces = arrayOf("application/json")
     )
-    @ApiOperation(value = "Display greeting message to admin user", response = String::class)
+    @ApiOperation(value = "ganna square guessing", response = String::class)
     @ApiResponses(
             value = *arrayOf(
                     ApiResponse(code = 200, message = "OK"),
