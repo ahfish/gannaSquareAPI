@@ -2,12 +2,17 @@ package gannaSquareAPI.domain.gannSquare
 
 import java.math.BigDecimal
 
+interface GannSpecialCell
+
 open class GannCell(
         open val base: Int,
         open val level: Int,
         open val next: GannCell? = null,
         open val previous: GannCell? = null
-)
+) {
+    override fun toString() =
+        "gannCell Type ${this.javaClass.name}, base ${base}, level ${level}"
+}
 
 open class UpCell(
         override val base: Int,
@@ -49,7 +54,7 @@ open class DiagonalCell(
         override val level: Int,
         override val next: GannCell? = null,
         override val previous: GannCell? = null
-) : GannCell(base, level, next, previous)
+) : GannCell(base, level, next, previous), GannSpecialCell
 
 open class UpRightDiagonalCell(
         override val base: Int,
@@ -80,33 +85,33 @@ open class DownLeftDiagonalCell(
         override val previous: GannCell? = null
 ) : DiagonalCell(base, level, next, previous)
 
-open class UpCorssCell(
+open class UpCrossCell(
         override val base: Int,
         override val level: Int,
         override val next: GannCell? = null,
         override val previous: GannCell? = null
-) : UpCell(base, level, next, previous)
+) : UpCell(base, level, next, previous), GannSpecialCell
 
-open class RightCorssCell(
+open class RightCrossCell(
         override val base: Int,
         override val level: Int,
         override val next: GannCell? = null,
         override val previous: GannCell? = null
-) : RightCell(base, level, next, previous)
+) : RightCell(base, level, next, previous), GannSpecialCell
 
-open class LeftCorssCell(
+open class LeftCrossCell(
         override val base: Int,
         override val level: Int,
         override val next: GannCell? = null,
         override val previous: GannCell? = null
-) : LeftCell(base, level, next, previous)
+) : LeftCell(base, level, next, previous), GannSpecialCell
 
-open class DownCorssCell(
+open class DownCrossCell(
         override val base: Int,
         override val level: Int,
         override val next: GannCell? = null,
         override val previous: GannCell? = null
-) : DownCell(base, level, next, previous)
+) : DownCell(base, level, next, previous), GannSpecialCell
 
 
 
