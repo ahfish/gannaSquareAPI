@@ -57,7 +57,7 @@ class QannSquareServiceImpl : QannSquareService {
         (1..1000).forEach {
             val level = it
             val levelGannCell = mutableListOf<GannCell>()
-            levelCache.putIfAbsent(level, levelGannCell)
+
             val start = startNumberOf(level)
             val end = endNumberOf(level)
             val levelBaseRange = (start..end)
@@ -148,6 +148,8 @@ class QannSquareServiceImpl : QannSquareService {
                 normal[1].forEachIndexed(assignNormalCell(upLeftDiagonalCell, upCrossCell, upRightDiagonalCell, UP, normal[1]))
                 normal[2].forEachIndexed(assignNormalCell(upRightDiagonalCell, rightCrossCell, downRightDiagonalCell, RIGHT, normal[2]))
                 normal[3].forEachIndexed(assignNormalCell(downRightDiagonalCell, downCrossCell, downLeftDiagonalCell, DOWN, normal[3]))
+                levelGannCell.sortBy { it.base }
+                levelCache.putIfAbsent(level, levelGannCell)
             } else {
                 log.error("Level ${level} contain not enough special gann cell [${special.size}] or nominal size is not enough [${normal.size}]")
             }
@@ -181,22 +183,22 @@ class QannSquareServiceImpl : QannSquareService {
 //
 //        log.info("down 134 - ${downTrendSpecialGannCell(gannCellMap[134]!!)?.base}")
 //        log.info("up 134 - ${upTrendSpecialGannCell(gannCellMap[134]!!)?.base}")
-        var id = 40
-        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
-        id = 222
-        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
-        id = 223
-        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
-
-        id = 213
-        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
-
-        id = 272
-        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
-        id = 162
-        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
-        id = 168
-        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
+            var id = 40
+//        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
+//        id = 222
+//        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
+//        id = 223
+//        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
+//
+//        id = 213
+//        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
+//
+//        id = 272
+//        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
+//        id = 162
+//        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
+//        id = 168
+//        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
 
 //        id = 134
 //        log.info("secondLevelBaseGannSquareOf ${id} - ${secondLevelBaseGannSquareOf(gannCellMap[id]!!)?.base}")
@@ -233,6 +235,14 @@ class QannSquareServiceImpl : QannSquareService {
 //        log.info("firstLevelGannSquareOf ${id} - ${firstLevelGannSquareOf(gannCellMap[id]!!).first?.base},  ${firstLevelGannSquareOf(gannCellMap[id]!!).second?.base}")
 //        id = 283
 //        log.info("firstLevelGannSquareOf ${id} - ${firstLevelGannSquareOf(gannCellMap[id]!!).first?.base},  ${firstLevelGannSquareOf(gannCellMap[id]!!).second?.base}")
+        id = 192
+//        log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+
+        id = 195
+//        log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+
+        id = 198
+        log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
     }
 
     fun gannSquareResultOf(base: Int): GannSquareResult? {
@@ -250,29 +260,28 @@ class QannSquareServiceImpl : QannSquareService {
         val second = target.secondLevelGannCell!!
         var upThird : GannCell? = null
         var downThird : GannCell? = null
+        var reflectionSpecialGann = specialGannCellsAsc.filterIsInstance(second.reflectionType).first { it.level ==  target.level}
         when ( second ) {
             is DiagonalCell -> {
-
-                val reflectionSpecialGann = specialGannCellsAsc.filterIsInstance(second.reflectionType).first { it.level ==  target.level}
                 if ( reflectionSpecialGann is DownLeftDiagonalCell ) {
                     val diff = target.differenceFromSecondGannCell
-                    if (diff > 0) {
-                        val levelGannCells = levelCache[target.level]?.get(diff - 1)
+                    if (diff < 0) {
+                        val levelGannCells = levelCache[target.level]?.get(diff.absoluteValue-1)
                         if (levelGannCells?.base!! > second.upThirdGannCell?.base!!) {
                             upThird = levelGannCells
-                            downThird = levelCache[target.level - 1]?.get(diff - 1)
+                            downThird = levelCache[target.level - 1]?.get(diff.absoluteValue-1)
                         } else {
                             downThird = levelGannCells
-                            upThird = levelCache[target.level + 1]?.get(diff - 1)
+                            upThird = levelCache[target.level + 1]?.get(diff.absoluteValue-1)
                         }
-                    } else if (diff < 0) {
-                        val levelGannCells = levelCache[target.level]?.takeLast(diff.absoluteValue)?.first()
+                    } else if (diff > 0) {
+                        val levelGannCells = levelCache[target.level]?.takeLast(diff.absoluteValue+1)?.first()
                         if (levelGannCells?.base!! > second.upThirdGannCell?.base!!) {
                             upThird = levelGannCells
-                            downThird = levelCache[target.level - 1]?.takeLast(diff.absoluteValue)?.first()
+                            downThird = levelCache[target.level - 1]?.takeLast(diff.absoluteValue+1)?.first()
                         } else {
                             downThird = levelGannCells
-                            upThird = levelCache[target.level - 1]?.takeLast(diff.absoluteValue)?.first()
+                            upThird = levelCache[target.level - 1]?.takeLast(diff.absoluteValue+1)?.first()
                         }
                     } else {
                         val levelGannCells = reflectionSpecialGann
@@ -284,14 +293,32 @@ class QannSquareServiceImpl : QannSquareService {
                             upThird = specialGannCellsAsc.filterIsInstance(second.reflectionType).first { it.level == target.level + 1 }
                         }
                     }
-                } else if ( reflectionSpecialGann is UpRightDiagonalCell ) {
-                    if ( )
-                } else {
-                    reflectionSpecialGann.base
+                } else{
+                   var levelGannCells = gannCellMap[reflectionSpecialGann.base - target.differenceFromSecondGannCell]
+                    if (levelGannCells?.base!! > second.upThirdGannCell?.base!!) {
+                        upThird = levelGannCells
+                        reflectionSpecialGann = specialGannCellsAsc.filterIsInstance(second.reflectionType).first { it.level == target.level - 1 }
+                        downThird = gannCellMap[reflectionSpecialGann.base - target.differenceFromSecondGannCell]
+                    } else {
+                        downThird = levelGannCells
+                        reflectionSpecialGann = specialGannCellsAsc.filterIsInstance(second.reflectionType).first { it.level == target.level + 1 }
+                        upThird = gannCellMap[reflectionSpecialGann.base - target.differenceFromSecondGannCell]
+                    }
                 }
+                return Pair(upThird, downThird)
             }
             is CrossCell -> {
-
+                var levelGannCells = gannCellMap[reflectionSpecialGann.base - target.differenceFromSecondGannCell]
+                if (levelGannCells?.base!! > second.upThirdGannCell?.base!!) {
+                    upThird = levelGannCells
+                    reflectionSpecialGann = specialGannCellsAsc.filterIsInstance(second.reflectionType).first { it.level == target.level - 1 }
+                    downThird = gannCellMap[reflectionSpecialGann.base - target.differenceFromSecondGannCell]
+                } else {
+                    downThird = levelGannCells
+                    reflectionSpecialGann = specialGannCellsAsc.filterIsInstance(second.reflectionType).first { it.level == target.level + 1 }
+                    upThird = gannCellMap[reflectionSpecialGann.base - target.differenceFromSecondGannCell]
+                }
+                return Pair(upThird, downThird)
             }
         }
         return Pair(null, null)
