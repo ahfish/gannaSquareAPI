@@ -20,9 +20,14 @@ open class GannSpecialCell(
 
 open class GannCell(
         open val base: Int,
-        open val level: Int
+        open val level: Int,
+        open var differenceFromSecondGannCell: Int,
 ) {
-    constructor(base: Int, level: Int, secondLevelGannCell: GannSpecialCell?) : this(base, level) {
+    constructor(base: Int, level: Int, secondLevelGannCell: GannSpecialCell?) : this(base, level, base-secondLevelGannCell?.base!!) {
+        this.secondLevelGannCell = secondLevelGannCell
+    }
+
+    constructor(base: Int, level: Int, differenceFromSecondGannCell: Int, secondLevelGannCell: GannSpecialCell?) : this(base, level, differenceFromSecondGannCell) {
         this.secondLevelGannCell = secondLevelGannCell
     }
 
@@ -38,7 +43,12 @@ open class NormalCell(
         override val level: Int,
         val direction: Direction,
         override var secondLevelGannCell: GannSpecialCell? = null
-) : GannCell(base, level, secondLevelGannCell)
+) : GannCell(base, level, secondLevelGannCell) {
+    constructor(base: Int, level: Int, direction: Direction, differenceFromSecondGannCell: Int, secondLevelGannCell: GannSpecialCell?) : this(base, level, direction, secondLevelGannCell) {
+        super.differenceFromSecondGannCell = differenceFromSecondGannCell
+    }
+
+}
 
 
 open class CrossCell(
@@ -58,7 +68,8 @@ open class DiagonalCell(
         override val level: Int,
 //        override var secondLevelGannCell: GannCell? = null,
         override var upThirdGannCell: GannSpecialCell? = null,
-        override var downThirdGannCell: GannSpecialCell? = null
+        override var downThirdGannCell: GannSpecialCell? = null,
+        val reflectionType : Class<out DiagonalCell>
 ) : GannSpecialCell(base, level, upThirdGannCell, downThirdGannCell) {
     override var secondLevelGannCell: GannSpecialCell? = null
         get() = this
@@ -70,7 +81,7 @@ open class UpRightDiagonalCell(
 //        override var secondLevelGannCell: GannCell? = null,
         override var upThirdGannCell: GannSpecialCell? = null,
         override var downThirdGannCell: GannSpecialCell? = null
-) : DiagonalCell(base, level, upThirdGannCell, downThirdGannCell)
+) : DiagonalCell(base, level, upThirdGannCell, downThirdGannCell, DownLeftDiagonalCell::class.java)
 
 open class DownRightDiagonalCell(
         override val base: Int,
@@ -78,7 +89,7 @@ open class DownRightDiagonalCell(
 //        override var secondLevelGannCell: GannCell? = null,
         override var upThirdGannCell: GannSpecialCell? = null,
         override var downThirdGannCell: GannSpecialCell? = null
-) : DiagonalCell(base, level, upThirdGannCell, downThirdGannCell)
+) : DiagonalCell(base, level, upThirdGannCell, downThirdGannCell, UpLeftDiagonalCell::class.java)
 
 open class UpLeftDiagonalCell(
         override val base: Int,
@@ -86,7 +97,7 @@ open class UpLeftDiagonalCell(
 //        override var secondLevelGannCell: GannCell? = null,
         override var upThirdGannCell: GannSpecialCell? = null,
         override var downThirdGannCell: GannSpecialCell? = null
-) : DiagonalCell(base, level, upThirdGannCell, downThirdGannCell)
+) : DiagonalCell(base, level, upThirdGannCell, downThirdGannCell, DownRightDiagonalCell::class.java)
 
 
 open class DownLeftDiagonalCell(
@@ -95,7 +106,7 @@ open class DownLeftDiagonalCell(
 //        override var secondLevelGannCell: GannCell? = null,
         override var upThirdGannCell: GannSpecialCell? = null,
         override var downThirdGannCell: GannSpecialCell? = null
-) : DiagonalCell(base, level, upThirdGannCell, downThirdGannCell)
+) : DiagonalCell(base, level, upThirdGannCell, downThirdGannCell, UpLeftDiagonalCell::class.java)
 
 open class UpCrossCell(
         override val base: Int,

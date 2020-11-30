@@ -3,6 +3,7 @@ package gannaSquareAPI.domain.gannSquare
 import gannaSquareAPI.Common.getLogger
 import gannaSquareAPI.domain.gannSquare.Direction.*
 import org.springframework.stereotype.Service
+import kotlin.math.absoluteValue
 
 interface QannSquareService {
 
@@ -51,7 +52,7 @@ class QannSquareServiceImpl : QannSquareService {
         specialGannCellsDesc = mutableListOf()
 //        val specialGannCell : MutableMap<Class<out GannSpecialCell>, MutableList<GannCell>>  = mutableMapOf()
 //        specialGannCell[LeftCrossCell::class.java] = mutableListOf()
-        val firstGann = GannCell(1, 0)
+        val firstGann = GannCell(1, 0, 0)
         gannCellMap[1] = firstGann
         (1..1000).forEach {
             val level = it
@@ -129,7 +130,11 @@ class QannSquareServiceImpl : QannSquareService {
                         { firstDiagonalCell, crossCell, secondDiagonalCell, direction, numbers ->
                             { index: Int, base: Int ->
                                 if ((level == 4 && index == 0) || (level > 4 && index in 0..1)) {
-                                    gannCellMap[base] = NormalCell(base, level, direction, firstDiagonalCell)
+                                    if ( firstDiagonalCell is DownLeftDiagonalCell) {
+                                        gannCellMap[base] = NormalCell(base, level, direction, firstDiagonalCell)
+                                    } else {
+                                        gannCellMap[base] = NormalCell(base, level, direction, index+1, firstDiagonalCell)
+                                    }
                                 } else if ((level == 4 && base == numbers.last()) || (level > 4 && base in numbers.takeLast(2))) {
                                     gannCellMap[base] = NormalCell(base, level, direction, secondDiagonalCell)
                                 } else {
@@ -235,10 +240,61 @@ class QannSquareServiceImpl : QannSquareService {
         val first = firstLevelGannSquareOf(gannCell)
         val firstUp = first.first
         val firstDown = first.second
-        val second = gannCell.secondLevelGannCell
-        val secondUp = second!!.upThirdGannCell
-        val secondDown = second!!.downThirdGannCell
+        val second = gannCell.secondLevelGannCell!!
+        val secondUp = second.upThirdGannCell
+        val secondDown = second.downThirdGannCell
         return null;
+    }
+
+    private inline fun thirdGannSqaureOf(target: GannCell) : Pair<GannCell?, GannCell?> {
+        val second = target.secondLevelGannCell!!
+        var upThird : GannCell? = null
+        var downThird : GannCell? = null
+        when ( second ) {
+            is DiagonalCell -> {
+
+                val reflectionSpecialGann = specialGannCellsAsc.filterIsInstance(second.reflectionType).first { it.level ==  target.level}
+                if ( reflectionSpecialGann is DownLeftDiagonalCell ) {
+                    val diff = target.differenceFromSecondGannCell
+                    if (diff > 0) {
+                        val levelGannCells = levelCache[target.level]?.get(diff - 1)
+                        if (levelGannCells?.base!! > second.upThirdGannCell?.base!!) {
+                            upThird = levelGannCells
+                            downThird = levelCache[target.level - 1]?.get(diff - 1)
+                        } else {
+                            downThird = levelGannCells
+                            upThird = levelCache[target.level + 1]?.get(diff - 1)
+                        }
+                    } else if (diff < 0) {
+                        val levelGannCells = levelCache[target.level]?.takeLast(diff.absoluteValue)?.first()
+                        if (levelGannCells?.base!! > second.upThirdGannCell?.base!!) {
+                            upThird = levelGannCells
+                            downThird = levelCache[target.level - 1]?.takeLast(diff.absoluteValue)?.first()
+                        } else {
+                            downThird = levelGannCells
+                            upThird = levelCache[target.level - 1]?.takeLast(diff.absoluteValue)?.first()
+                        }
+                    } else {
+                        val levelGannCells = reflectionSpecialGann
+                        if (levelGannCells?.base!! > second.upThirdGannCell?.base!!) {
+                            upThird = levelGannCells
+                            downThird = specialGannCellsAsc.filterIsInstance(second.reflectionType).first { it.level == target.level - 1 }
+                        } else {
+                            downThird = levelGannCells
+                            upThird = specialGannCellsAsc.filterIsInstance(second.reflectionType).first { it.level == target.level + 1 }
+                        }
+                    }
+                } else if ( reflectionSpecialGann is UpRightDiagonalCell ) {
+                    if ( )
+                } else {
+                    reflectionSpecialGann.base
+                }
+            }
+            is CrossCell -> {
+
+            }
+        }
+        return Pair(null, null)
     }
 
     private inline fun upTrendResultOf(target : GannCell) : Triple<Int, Int, Int>? {
