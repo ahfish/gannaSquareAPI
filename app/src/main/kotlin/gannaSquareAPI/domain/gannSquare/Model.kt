@@ -118,7 +118,7 @@ open class DownLeftDiagonalCell(
 //        override var secondLevelGannCell: GannCell? = null,
         override var upThirdGannCell: GannSpecialCell? = null,
         override var downThirdGannCell: GannSpecialCell? = null
-) : DiagonalCell(base, level, upThirdGannCell, downThirdGannCell, UpLeftDiagonalCell::class.java)
+) : DiagonalCell(base, level, upThirdGannCell, downThirdGannCell, UpRightDiagonalCell::class.java)
 
 open class UpCrossCell(
         override val base: Int,
@@ -154,6 +154,7 @@ open class DownCrossCell(
 
 
 open class GannSquareResult(
+        val base : BigDecimal,
         val upTrendLevel: List<BigDecimal>,
         val downTrendLevel: List<BigDecimal>
 )

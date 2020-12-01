@@ -4,14 +4,17 @@ import gannaSquareAPI.Common.getLogger
 import gannaSquareAPI.domain.gannSquare.Direction.*
 import org.springframework.stereotype.Service
 import kotlin.math.absoluteValue
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 interface QannSquareService {
-
+    fun gannSquareResultOf(base: Int): GannSquareResult
 }
 
 typealias gannCellFunctionType = (index: Int, value: Int) -> Unit
 
 @Service
+@ExperimentalTime
 class QannSquareServiceImpl : QannSquareService {
 
     val gannCellMap: MutableMap<Int, GannCell>
@@ -43,127 +46,128 @@ class QannSquareServiceImpl : QannSquareService {
                 numbers.minus(exclude)
             }
 
+
     init {
-        gannCellMap = mutableMapOf()
-        gannCellsAsc = mutableListOf()
-        gannCellsDesc = mutableListOf()
-        levelCache = mutableMapOf()
-        specialGannCellsAsc = mutableListOf()
-        specialGannCellsDesc = mutableListOf()
-//        val specialGannCell : MutableMap<Class<out GannSpecialCell>, MutableList<GannCell>>  = mutableMapOf()
-//        specialGannCell[LeftCrossCell::class.java] = mutableListOf()
-        val firstGann = GannCell(1, 0, 0)
-        gannCellMap[1] = firstGann
-        (1..1000).forEach {
-            val level = it
-            val levelGannCell = mutableListOf<GannCell>()
+        log.info("initialize QannSquareServiceImpl")
+        val time = measureTime {
+            gannCellMap = mutableMapOf()
+            gannCellsAsc = mutableListOf()
+            gannCellsDesc = mutableListOf()
+            levelCache = mutableMapOf()
+            specialGannCellsAsc = mutableListOf()
+            specialGannCellsDesc = mutableListOf()
+            val firstGann = GannCell(1, 0, 0)
+            gannCellMap[1] = firstGann
+            (1..1000).forEach {
+                val level = it
+                val levelGannCell = mutableListOf<GannCell>()
 
-            val start = startNumberOf(level)
-            val end = endNumberOf(level)
-            val levelBaseRange = (start..end)
-            val special = selectSpecial(levelBaseRange.toList(), level)
-            val normal = selectNormal(levelBaseRange.toList(), level, special)
-            if (special.size == 8 && normal.size == 4) {
+                val start = startNumberOf(level)
+                val end = endNumberOf(level)
+                val levelBaseRange = (start..end)
+                val special = selectSpecial(levelBaseRange.toList(), level)
+                val normal = selectNormal(levelBaseRange.toList(), level, special)
+                if (special.size == 8 && normal.size == 4) {
 
-                val leftCrossCell = LeftCrossCell(special[0], level)
-                gannCellMap[special[0]] = leftCrossCell
-                levelGannCell?.add(leftCrossCell)
+                    val leftCrossCell = LeftCrossCell(special[0], level)
+                    gannCellMap[special[0]] = leftCrossCell
+                    levelGannCell?.add(leftCrossCell)
 
-                val upLeftDiagonalCell = UpLeftDiagonalCell(special[1], level)
-                gannCellMap[special[1]] = upLeftDiagonalCell
-                levelGannCell?.add(upLeftDiagonalCell)
+                    val upLeftDiagonalCell = UpLeftDiagonalCell(special[1], level)
+                    gannCellMap[special[1]] = upLeftDiagonalCell
+                    levelGannCell?.add(upLeftDiagonalCell)
 
-                val upCrossCell = UpCrossCell(special[2], level)
-                gannCellMap[special[2]] = upCrossCell
-                levelGannCell?.add(upCrossCell)
+                    val upCrossCell = UpCrossCell(special[2], level)
+                    gannCellMap[special[2]] = upCrossCell
+                    levelGannCell?.add(upCrossCell)
 
-                val upRightDiagonalCell = UpRightDiagonalCell(special[3], level)
-                gannCellMap[special[3]] = upRightDiagonalCell
-                levelGannCell?.add(upRightDiagonalCell)
+                    val upRightDiagonalCell = UpRightDiagonalCell(special[3], level)
+                    gannCellMap[special[3]] = upRightDiagonalCell
+                    levelGannCell?.add(upRightDiagonalCell)
 
-                val rightCrossCell = RightCrossCell(special[4], level)
-                gannCellMap[special[4]] = rightCrossCell
-                levelGannCell?.add(rightCrossCell)
+                    val rightCrossCell = RightCrossCell(special[4], level)
+                    gannCellMap[special[4]] = rightCrossCell
+                    levelGannCell?.add(rightCrossCell)
 
-                val downRightDiagonalCell = DownRightDiagonalCell(special[5], level)
-                gannCellMap[special[5]] = downRightDiagonalCell
-                levelGannCell?.add(downRightDiagonalCell)
+                    val downRightDiagonalCell = DownRightDiagonalCell(special[5], level)
+                    gannCellMap[special[5]] = downRightDiagonalCell
+                    levelGannCell?.add(downRightDiagonalCell)
 
-                val downCrossCell = DownCrossCell(special[6], level)
-                gannCellMap[special[6]] = downCrossCell
-                levelGannCell?.add(downCrossCell)
+                    val downCrossCell = DownCrossCell(special[6], level)
+                    gannCellMap[special[6]] = downCrossCell
+                    levelGannCell?.add(downCrossCell)
 
-                val downLeftDiagonalCell = DownLeftDiagonalCell(special[7], level)
-                gannCellMap[special[7]] = downLeftDiagonalCell
-                levelGannCell?.add(downLeftDiagonalCell)
+                    val downLeftDiagonalCell = DownLeftDiagonalCell(special[7], level)
+                    gannCellMap[special[7]] = downLeftDiagonalCell
+                    levelGannCell?.add(downLeftDiagonalCell)
 
-                leftCrossCell.upThirdGannCell = upCrossCell
-                rightCrossCell.upThirdGannCell = downCrossCell
-                upCrossCell.upThirdGannCell = rightCrossCell
-                levelCache[level - 1]?.filterIsInstance<DownCrossCell>()?.firstOrNull().let {
-                    it?.upThirdGannCell = leftCrossCell
-                }
+                    leftCrossCell.upThirdGannCell = upCrossCell
+                    rightCrossCell.upThirdGannCell = downCrossCell
+                    upCrossCell.upThirdGannCell = rightCrossCell
+                    levelCache[level - 1]?.filterIsInstance<DownCrossCell>()?.firstOrNull().let {
+                        it?.upThirdGannCell = leftCrossCell
+                    }
 
 
-                levelCache[level - 1]?.filterIsInstance<DownCrossCell>()?.firstOrNull().let {
-                    leftCrossCell.downThirdGannCell = it
-                }
-                upCrossCell.downThirdGannCell = leftCrossCell
-                rightCrossCell.downThirdGannCell = upCrossCell
-                downCrossCell.downThirdGannCell = rightCrossCell
+                    levelCache[level - 1]?.filterIsInstance<DownCrossCell>()?.firstOrNull().let {
+                        leftCrossCell.downThirdGannCell = it
+                    }
+                    upCrossCell.downThirdGannCell = leftCrossCell
+                    rightCrossCell.downThirdGannCell = upCrossCell
+                    downCrossCell.downThirdGannCell = rightCrossCell
 
-                levelCache[level - 1]?.filterIsInstance<DownLeftDiagonalCell>()?.firstOrNull().let {
-                    it?.upThirdGannCell = upLeftDiagonalCell
-                }
-                upLeftDiagonalCell.upThirdGannCell = upRightDiagonalCell
-                upRightDiagonalCell.upThirdGannCell = downRightDiagonalCell
-                downRightDiagonalCell.upThirdGannCell = downLeftDiagonalCell
+                    levelCache[level - 1]?.filterIsInstance<DownLeftDiagonalCell>()?.firstOrNull().let {
+                        it?.upThirdGannCell = upLeftDiagonalCell
+                    }
+                    upLeftDiagonalCell.upThirdGannCell = upRightDiagonalCell
+                    upRightDiagonalCell.upThirdGannCell = downRightDiagonalCell
+                    downRightDiagonalCell.upThirdGannCell = downLeftDiagonalCell
 
-                levelCache[level - 1]?.filterIsInstance<DownLeftDiagonalCell>()?.firstOrNull().let {
-                    upLeftDiagonalCell.downThirdGannCell = it
-                }
-                downLeftDiagonalCell.downThirdGannCell = downRightDiagonalCell
-                downRightDiagonalCell.downThirdGannCell = upRightDiagonalCell
-                upRightDiagonalCell.downThirdGannCell = upLeftDiagonalCell
+                    levelCache[level - 1]?.filterIsInstance<DownLeftDiagonalCell>()?.firstOrNull().let {
+                        upLeftDiagonalCell.downThirdGannCell = it
+                    }
+                    downLeftDiagonalCell.downThirdGannCell = downRightDiagonalCell
+                    downRightDiagonalCell.downThirdGannCell = upRightDiagonalCell
+                    upRightDiagonalCell.downThirdGannCell = upLeftDiagonalCell
 
-                val assignNormalCell: (firstDiagonalCell: DiagonalCell, crossCell: CrossCell, secondDiagonalCell: DiagonalCell, direction: Direction, numbers: List<Int>) -> gannCellFunctionType =
-                        { firstDiagonalCell, crossCell, secondDiagonalCell, direction, numbers ->
-                            { index: Int, base: Int ->
-                                if ((level == 4 && index == 0) || (level > 4 && index in 0..1)) {
-                                    if ( firstDiagonalCell is DownLeftDiagonalCell) {
-                                        gannCellMap[base] = NormalCell(base, level, direction, firstDiagonalCell)
+                    val assignNormalCell: (firstDiagonalCell: DiagonalCell, crossCell: CrossCell, secondDiagonalCell: DiagonalCell, direction: Direction, numbers: List<Int>) -> gannCellFunctionType =
+                            { firstDiagonalCell, crossCell, secondDiagonalCell, direction, numbers ->
+                                { index: Int, base: Int ->
+                                    if ((level == 4 && index == 0) || (level > 4 && index in 0..1)) {
+                                        if ( firstDiagonalCell is DownLeftDiagonalCell) {
+                                            gannCellMap[base] = NormalCell(base, level, direction, firstDiagonalCell)
+                                        } else {
+                                            gannCellMap[base] = NormalCell(base, level, direction, index+1, firstDiagonalCell)
+                                        }
+                                    } else if ((level == 4 && base == numbers.last()) || (level > 4 && base in numbers.takeLast(2))) {
+                                        gannCellMap[base] = NormalCell(base, level, direction, secondDiagonalCell)
                                     } else {
-                                        gannCellMap[base] = NormalCell(base, level, direction, index+1, firstDiagonalCell)
+                                        gannCellMap[base] = NormalCell(base, level, direction, crossCell)
                                     }
-                                } else if ((level == 4 && base == numbers.last()) || (level > 4 && base in numbers.takeLast(2))) {
-                                    gannCellMap[base] = NormalCell(base, level, direction, secondDiagonalCell)
-                                } else {
-                                    gannCellMap[base] = NormalCell(base, level, direction, crossCell)
+                                    levelGannCell?.add(gannCellMap[base]!!)
                                 }
-                                levelGannCell?.add(gannCellMap[base]!!)
                             }
-                        }
 
-                normal[0].forEachIndexed(assignNormalCell(downLeftDiagonalCell, leftCrossCell, upLeftDiagonalCell, LEFT, normal[0]))
-                normal[1].forEachIndexed(assignNormalCell(upLeftDiagonalCell, upCrossCell, upRightDiagonalCell, UP, normal[1]))
-                normal[2].forEachIndexed(assignNormalCell(upRightDiagonalCell, rightCrossCell, downRightDiagonalCell, RIGHT, normal[2]))
-                normal[3].forEachIndexed(assignNormalCell(downRightDiagonalCell, downCrossCell, downLeftDiagonalCell, DOWN, normal[3]))
-                levelGannCell.sortBy { it.base }
-                levelCache.putIfAbsent(level, levelGannCell)
-            } else {
-                log.error("Level ${level} contain not enough special gann cell [${special.size}] or nominal size is not enough [${normal.size}]")
+                    normal[0].forEachIndexed(assignNormalCell(downLeftDiagonalCell, leftCrossCell, upLeftDiagonalCell, LEFT, normal[0]))
+                    normal[1].forEachIndexed(assignNormalCell(upLeftDiagonalCell, upCrossCell, upRightDiagonalCell, UP, normal[1]))
+                    normal[2].forEachIndexed(assignNormalCell(upRightDiagonalCell, rightCrossCell, downRightDiagonalCell, RIGHT, normal[2]))
+                    normal[3].forEachIndexed(assignNormalCell(downRightDiagonalCell, downCrossCell, downLeftDiagonalCell, DOWN, normal[3]))
+                    levelGannCell.sortBy { it.base }
+                    levelCache.putIfAbsent(level, levelGannCell)
+                } else {
+                    log.error("Level ${level} contain not enough special gann cell [${special.size}] or nominal size is not enough [${normal.size}]")
+                }
             }
-        }
 
-        gannCellMap.keys.sorted().forEach {
-            gannCellsAsc.add(gannCellMap[it]!!)
-            if ( gannCellMap[it] is GannSpecialCell) specialGannCellsAsc.add(gannCellMap[it] as GannSpecialCell)
-        }
+            gannCellMap.keys.sorted().forEach {
+                gannCellsAsc.add(gannCellMap[it]!!)
+                if ( gannCellMap[it] is GannSpecialCell) specialGannCellsAsc.add(gannCellMap[it] as GannSpecialCell)
+            }
 
-        gannCellMap.keys.reversed().forEach {
-            gannCellsDesc.add(gannCellMap[it]!!)
-            if ( gannCellMap[it] is GannSpecialCell) specialGannCellsDesc.add(gannCellMap[it] as GannSpecialCell)
-        }
+            gannCellMap.keys.reversed().forEach {
+                gannCellsDesc.add(gannCellMap[it]!!)
+                if ( gannCellMap[it] is GannSpecialCell) specialGannCellsDesc.add(gannCellMap[it] as GannSpecialCell)
+            }
 
 //        gannCellsAsc.filter { it.level == 6 }.filter { it is GannSpecialCell }.forEach {
 //            log.info(it.toString())
@@ -235,25 +239,44 @@ class QannSquareServiceImpl : QannSquareService {
 //        log.info("firstLevelGannSquareOf ${id} - ${firstLevelGannSquareOf(gannCellMap[id]!!).first?.base},  ${firstLevelGannSquareOf(gannCellMap[id]!!).second?.base}")
 //        id = 283
 //        log.info("firstLevelGannSquareOf ${id} - ${firstLevelGannSquareOf(gannCellMap[id]!!).first?.base},  ${firstLevelGannSquareOf(gannCellMap[id]!!).second?.base}")
-        id = 192
+            id = 192
 //        log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
 
-        id = 195
+            id = 195
 //        log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
 
-        id = 198
-        log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+            id = 388
+            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+            id = 389
+            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+            id = 390
+            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+            id = 317
+            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+        }
+        log.info("Done in ${time}")
     }
 
-    fun gannSquareResultOf(base: Int): GannSquareResult? {
+    override fun gannSquareResultOf(base: Int): GannSquareResult {
         val gannCell = gannCellMap[base]!!
         val first = firstLevelGannSquareOf(gannCell)
-        val firstUp = first.first
-        val firstDown = first.second
         val second = gannCell.secondLevelGannCell!!
         val secondUp = second.upThirdGannCell
         val secondDown = second.downThirdGannCell
-        return null;
+        val third = thirdGannSqaureOf(gannCell)
+        return GannSquareResult(
+                base.toBigDecimal(),
+                listOf(
+                        first.first!!.base.toBigDecimal(),
+                        secondUp!!.base.toBigDecimal(),
+                        third.first!!.base.toBigDecimal()
+                ),
+                listOf(
+                        first.second!!.base.toBigDecimal(),
+                        secondDown!!.base.toBigDecimal(),
+                        third.second!!.base.toBigDecimal()
+                )
+        )
     }
 
     private inline fun thirdGannSqaureOf(target: GannCell) : Pair<GannCell?, GannCell?> {
@@ -324,10 +347,6 @@ class QannSquareServiceImpl : QannSquareService {
         return Pair(null, null)
     }
 
-    private inline fun upTrendResultOf(target : GannCell) : Triple<Int, Int, Int>? {
-        //First Level
-        return null;
-    }
 
     private inline fun firstLevelGannSquareOf(target : GannCell) =
         Pair(

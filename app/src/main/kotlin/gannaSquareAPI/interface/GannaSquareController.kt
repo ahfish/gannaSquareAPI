@@ -1,5 +1,7 @@
 package gannaSquareAPI.`interface`
 
+import gannaSquareAPI.domain.gannSquare.GannSquareResult
+import gannaSquareAPI.domain.gannSquare.QannSquareService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -13,7 +15,7 @@ import java.math.BigDecimal
 @RestController
 @RequestMapping("/gannaSqure")
 @Api(value = "GannaSquare", description = "Ganna Square API", tags = arrayOf("Ganna Square API"))
-class GannaSquareController {
+class GannaSquareController(val qannSquareService : QannSquareService) {
     @RequestMapping(
             value = ["/of/{price}/with/{digit}/sensitivity"],
             method = arrayOf(RequestMethod.GET),
@@ -27,8 +29,7 @@ class GannaSquareController {
                     ApiResponse(code = 404, message = "The resource not found")
             )
     )
-    fun message(@PathVariable price: BigDecimal, @PathVariable digit : BigDecimal): String {
-        return "${price}-${digit}"
-    }
+    fun gannSquare(@PathVariable price: BigDecimal, @PathVariable digit : BigDecimal): GannSquareResult
+    = qannSquareService.gannSquareResultOf(price.toInt())
 
 }
