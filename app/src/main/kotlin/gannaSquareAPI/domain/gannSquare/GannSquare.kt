@@ -58,7 +58,7 @@ class QannSquareServiceImpl : QannSquareService {
             specialGannCellsDesc = mutableListOf()
             val firstGann = GannCell(1, 0, 0)
             gannCellMap[1] = firstGann
-            (1..500).forEach {
+            (1..800).forEach {
                 val level = it
                 val levelGannCell = mutableListOf<GannCell>()
 
