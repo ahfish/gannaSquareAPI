@@ -1,1 +1,1 @@
-web: java -Xmx1g -Dserver.port=$PORT -jar app/build/libs/app.jar
+web: java -Xmx512m -Dserver.port=$PORT -jar app/build/libs/app.jar

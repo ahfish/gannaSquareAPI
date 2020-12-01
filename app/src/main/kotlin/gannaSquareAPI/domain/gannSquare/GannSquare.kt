@@ -18,8 +18,8 @@ typealias gannCellFunctionType = (index: Int, value: Int) -> Unit
 class QannSquareServiceImpl : QannSquareService {
 
     val gannCellMap: MutableMap<Int, GannCell>
-    val gannCellsAsc: MutableList<GannCell>
-    val gannCellsDesc: MutableList<GannCell>
+//    val gannCellsAsc: MutableList<GannCell>
+//    val gannCellsDesc: MutableList<GannCell>
     val specialGannCellsAsc: MutableList<GannSpecialCell>
     val specialGannCellsDesc: MutableList<GannSpecialCell>
     val levelCache: MutableMap<Int, MutableList<GannCell>>
@@ -51,14 +51,14 @@ class QannSquareServiceImpl : QannSquareService {
         log.info("initialize QannSquareServiceImpl")
         val time = measureTime {
             gannCellMap = mutableMapOf()
-            gannCellsAsc = mutableListOf()
-            gannCellsDesc = mutableListOf()
+            //gannCellsAsc = mutableListOf()
+//            gannCellsDesc = mutableListOf()
             levelCache = mutableMapOf()
             specialGannCellsAsc = mutableListOf()
             specialGannCellsDesc = mutableListOf()
             val firstGann = GannCell(1, 0, 0)
             gannCellMap[1] = firstGann
-            (1..1000).forEach {
+            (1..500).forEach {
                 val level = it
                 val levelGannCell = mutableListOf<GannCell>()
 
@@ -160,12 +160,12 @@ class QannSquareServiceImpl : QannSquareService {
             }
 
             gannCellMap.keys.sorted().forEach {
-                gannCellsAsc.add(gannCellMap[it]!!)
+//                gannCellsAsc.add(gannCellMap[it]!!)
                 if ( gannCellMap[it] is GannSpecialCell) specialGannCellsAsc.add(gannCellMap[it] as GannSpecialCell)
             }
 
             gannCellMap.keys.reversed().forEach {
-                gannCellsDesc.add(gannCellMap[it]!!)
+//                gannCellsDesc.add(gannCellMap[it]!!)
                 if ( gannCellMap[it] is GannSpecialCell) specialGannCellsDesc.add(gannCellMap[it] as GannSpecialCell)
             }
 
@@ -254,7 +254,7 @@ class QannSquareServiceImpl : QannSquareService {
             id = 317
             log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
         }
-        log.info("Done in ${time}")
+        log.info("Done in ${time}, last base is ${gannCellMap.keys.sorted().last()}")
     }
 
     override fun gannSquareResultOf(base: Int): GannSquareResult {
