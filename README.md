@@ -8,7 +8,7 @@ ganna Square API
 git push heroku HEAD:master
 
 #Url Access
-https://gannsquare.herokuapp.com/swagger-ui
+https://gannsquare.herokuapp.com/swagger-ui/
 
 #Local Run
 java -Xmx512m -jar app/build/libs/app.jar 
@@ -17,4 +17,4 @@ java -Xmx512m -jar app/build/libs/app.jar
 heroku create gannsquare
 
 #Url Local 
-http://127.0.0.1:8080/swagger-ui
+http://127.0.0.1:8080/swagger-ui/

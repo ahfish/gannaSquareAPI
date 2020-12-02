@@ -25,8 +25,7 @@ class GannaSquareController(val qannSquareService : QannSquareService) {
     @ApiResponses(
             value = *arrayOf(
                     ApiResponse(code = 200, message = "OK"),
-                    ApiResponse(code = 401, message = "You are not authorized access the resource"),
-                    ApiResponse(code = 404, message = "The resource not found")
+                    ApiResponse(code = 400, message = "Wrong input"),
             )
     )
     fun gannSquare(@PathVariable base: Int): GannSquareResult
@@ -41,8 +40,7 @@ class GannaSquareController(val qannSquareService : QannSquareService) {
     @ApiResponses(
             value = *arrayOf(
                     ApiResponse(code = 200, message = "OK"),
-                    ApiResponse(code = 401, message = "You are not authorized access the resource"),
-                    ApiResponse(code = 404, message = "The resource not found")
+                    ApiResponse(code = 400, message = "Wrong input"),
             )
     )
     fun gannSquare(@PathVariable price: BigDecimal, @PathVariable digit : BigDecimal): GannSquareResult
