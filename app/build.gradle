@@ -1,7 +1,7 @@
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.20'
 
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
@@ -36,6 +36,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     runtime 'org.jetbrains.kotlin:kotlin-reflect:1.4.20'
+    runtime 'org.springframework.boot:spring-boot-starter-actuator'
+
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'

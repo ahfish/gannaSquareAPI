@@ -1,0 +1,11 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+  main:
+    log-startup-info: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
