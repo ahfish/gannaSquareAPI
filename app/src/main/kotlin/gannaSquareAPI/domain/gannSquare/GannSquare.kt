@@ -3,12 +3,14 @@ package gannaSquareAPI.domain.gannSquare
 import gannaSquareAPI.Common.getLogger
 import gannaSquareAPI.domain.gannSquare.Direction.*
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 import kotlin.math.absoluteValue
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
 interface QannSquareService {
     fun gannSquareResultOf(base: Int): GannSquareResult
+    fun gannSquareResultOf(base: BigDecimal, digit: BigDecimal): GannSquareResult
 }
 
 typealias gannCellFunctionType = (index: Int, value: Int) -> Unit
@@ -18,11 +20,10 @@ typealias gannCellFunctionType = (index: Int, value: Int) -> Unit
 class QannSquareServiceImpl : QannSquareService {
 
     val gannCellMap: MutableMap<Int, GannCell>
-//    val gannCellsAsc: MutableList<GannCell>
-//    val gannCellsDesc: MutableList<GannCell>
     val specialGannCellsAsc: MutableList<GannSpecialCell>
     val specialGannCellsDesc: MutableList<GannSpecialCell>
     val levelCache: MutableMap<Int, MutableList<GannCell>>
+    val maxBase : Int
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -51,8 +52,6 @@ class QannSquareServiceImpl : QannSquareService {
         log.info("initialize QannSquareServiceImpl")
         val time = measureTime {
             gannCellMap = mutableMapOf()
-            //gannCellsAsc = mutableListOf()
-//            gannCellsDesc = mutableListOf()
             levelCache = mutableMapOf()
             specialGannCellsAsc = mutableListOf()
             specialGannCellsDesc = mutableListOf()
@@ -160,19 +159,12 @@ class QannSquareServiceImpl : QannSquareService {
             }
 
             gannCellMap.keys.sorted().forEach {
-//                gannCellsAsc.add(gannCellMap[it]!!)
                 if ( gannCellMap[it] is GannSpecialCell) specialGannCellsAsc.add(gannCellMap[it] as GannSpecialCell)
             }
 
             gannCellMap.keys.reversed().forEach {
-//                gannCellsDesc.add(gannCellMap[it]!!)
                 if ( gannCellMap[it] is GannSpecialCell) specialGannCellsDesc.add(gannCellMap[it] as GannSpecialCell)
             }
-
-//        gannCellsAsc.filter { it.level == 6 }.filter { it is GannSpecialCell }.forEach {
-//            log.info(it.toString())
-//        }
-
 //        log.info("down 130 - ${downTrendSpecialGannCell(gannCellMap[130]!!)?.base}")
 //        log.info("up 130 - ${upTrendSpecialGannCell(gannCellMap[130]!!)?.base}")
 //
@@ -187,7 +179,7 @@ class QannSquareServiceImpl : QannSquareService {
 //
 //        log.info("down 134 - ${downTrendSpecialGannCell(gannCellMap[134]!!)?.base}")
 //        log.info("up 134 - ${upTrendSpecialGannCell(gannCellMap[134]!!)?.base}")
-            var id = 40
+//            var id = 40
 //        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
 //        id = 222
 //        log.info("secondLevelBaseGannSquareOf ${id} - ${gannCellMap[id]!!.secondLevelGannCell!!.base}")
@@ -239,25 +231,48 @@ class QannSquareServiceImpl : QannSquareService {
 //        log.info("firstLevelGannSquareOf ${id} - ${firstLevelGannSquareOf(gannCellMap[id]!!).first?.base},  ${firstLevelGannSquareOf(gannCellMap[id]!!).second?.base}")
 //        id = 283
 //        log.info("firstLevelGannSquareOf ${id} - ${firstLevelGannSquareOf(gannCellMap[id]!!).first?.base},  ${firstLevelGannSquareOf(gannCellMap[id]!!).second?.base}")
-            id = 192
+//            id = 192
 //        log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
 
-            id = 195
+//            id = 195
 //        log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
 
-            id = 388
-            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
-            id = 389
-            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
-            id = 390
-            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
-            id = 317
-            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+//            id = 388
+//            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+//            id = 389
+//            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+//            id = 390
+//            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
+//            id = 317
+//            log.info("thirdGannSqaureOf ${id} - ${thirdGannSqaureOf(gannCellMap[id]!!).first?.base},  ${thirdGannSqaureOf(gannCellMap[id]!!).second?.base}")
         }
-        log.info("Done in ${time}, last base is ${gannCellMap.keys.sorted().last()}")
+        maxBase= gannCellMap.keys.sorted().last()
+        log.info("Done in ${time}, last base is ${maxBase}")
+    }
+
+    override fun gannSquareResultOf(base: BigDecimal, digit: BigDecimal): GannSquareResult {
+        var targetBase = BigDecimal.ZERO
+        val intPart = base.setScale(0, BigDecimal.ROUND_DOWN)
+        val decimalPart  = base.subtract(intPart)
+        var numberOfDecimalPoint = BigDecimal.ZERO
+        if ( !BigDecimal.ZERO.equals(intPart) ) {
+            targetBase = intPart
+        }
+        if ( !BigDecimal.ZERO.equals(decimalPart) ) {
+            numberOfDecimalPoint = BigDecimal(decimalPart.toPlainString().length - 2)
+            targetBase = targetBase.multiply(BigDecimal.TEN.pow(numberOfDecimalPoint.toInt())).add(decimalPart.multiply(BigDecimal.TEN.pow(numberOfDecimalPoint.toInt()))).setScale(0, BigDecimal.ROUND_DOWN)
+        }
+        val remainingNumberOfDigit = if ( (targetBase.toPlainString().length - digit.toInt()) > 0 ) targetBase.toPlainString().length - digit.toInt() else 0
+        val gannSquareResult = gannSquareResultOf(BigDecimal(targetBase.toPlainString().take(digit.toInt())).toInt())
+
+        return GannSquareResult(base,
+                gannSquareResult.upTrendLevel.map { it.multiply(BigDecimal.TEN.pow(remainingNumberOfDigit)).divide(BigDecimal.TEN.pow(numberOfDecimalPoint.toInt())) }.toList(),
+                gannSquareResult.downTrendLevel.map { it.multiply(BigDecimal.TEN.pow(remainingNumberOfDigit)).divide(BigDecimal.TEN.pow(numberOfDecimalPoint.toInt())) }.toList()
+        )
     }
 
     override fun gannSquareResultOf(base: Int): GannSquareResult {
+        if ( base >= maxBase ) throw Exception("${base} cannot be larger than ${maxBase}")
         val gannCell = gannCellMap[base]!!
         val first = firstLevelGannSquareOf(gannCell)
         val second = gannCell.secondLevelGannCell!!

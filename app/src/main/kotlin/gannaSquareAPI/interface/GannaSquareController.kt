@@ -17,6 +17,22 @@ import java.math.BigDecimal
 @Api(value = "GannaSquare", description = "Ganna Square API", tags = arrayOf("Ganna Square API"))
 class GannaSquareController(val qannSquareService : QannSquareService) {
     @RequestMapping(
+            value = ["/of/{base}"],
+            method = arrayOf(RequestMethod.GET),
+            produces = arrayOf("application/json")
+    )
+    @ApiOperation(value = "ganna square guessing", response = GannSquareResult::class)
+    @ApiResponses(
+            value = *arrayOf(
+                    ApiResponse(code = 200, message = "OK"),
+                    ApiResponse(code = 401, message = "You are not authorized access the resource"),
+                    ApiResponse(code = 404, message = "The resource not found")
+            )
+    )
+    fun gannSquare(@PathVariable base: Int): GannSquareResult
+    = qannSquareService.gannSquareResultOf(base)
+
+    @RequestMapping(
             value = ["/of/{price}/with/{digit}/sensitivity"],
             method = arrayOf(RequestMethod.GET),
             produces = arrayOf("application/json")
@@ -30,6 +46,6 @@ class GannaSquareController(val qannSquareService : QannSquareService) {
             )
     )
     fun gannSquare(@PathVariable price: BigDecimal, @PathVariable digit : BigDecimal): GannSquareResult
-    = qannSquareService.gannSquareResultOf(price.toInt())
+            = qannSquareService.gannSquareResultOf(price, digit)
 
 }
