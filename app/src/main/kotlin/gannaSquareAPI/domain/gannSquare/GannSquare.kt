@@ -365,8 +365,8 @@ class QannSquareServiceImpl : QannSquareService {
 
     private inline fun firstLevelGannSquareOf(target : GannCell) =
         Pair(
-                specialGannCellsAsc.filter { it.base > target.base + 2 }.firstOrNull(),
-                specialGannCellsDesc.filter { it.base < target.base - 2 }.firstOrNull()
+                specialGannCellsAsc.filter { it.base > target.base + it.base.toString().length-1 }.firstOrNull(),
+                specialGannCellsDesc.filter { it.base < target.base - it.base.toString().length-1 }.firstOrNull()
         )
 
 
